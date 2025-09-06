@@ -1,11 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SignInButton } from '@clerk/clerk-react'
 import Layout from './components/layout/Layout'
-<<<<<<< HEAD
-import DepartmentList from './components/departments/DepartmentList'
-import PeopleList from './components/people/PeopleList'
-=======
->>>>>>> 8744d5c (Initial commit)
 import Dashboard from './pages/Dashboard'
 import UserSetup from './components/auth/UserSetup'
 import ApprovalStatusHandler from './components/auth/ApprovalStatusHandler'
@@ -16,11 +11,8 @@ import AnalyticsPage from './pages/admin/AnalyticsPage'
 import ReportsPage from './pages/admin/ReportsPage'
 import SettingsPage from './pages/admin/SettingsPage'
 import ApprovalsPage from './pages/admin/ApprovalsPage'
-<<<<<<< HEAD
-=======
 import DepartmentsPage from './pages/admin/DepartmentsPage'
 import PeoplePage from './pages/admin/PeoplePage'
->>>>>>> 8744d5c (Initial commit)
 
 // Teacher Pages
 import ClassesPage from './pages/teacher/ClassesPage'
@@ -43,8 +35,6 @@ import AttendancePage from './pages/shared/AttendancePage'
 
 function App() {
   const { isSignedIn, isLoaded, dbUser, approvalStatus, role } = useAuth()
-<<<<<<< HEAD
-=======
   
   
   // Create a route protection component
@@ -59,7 +49,6 @@ function App() {
     
     return <Navigate to="/" replace />
   }
->>>>>>> 8744d5c (Initial commit)
 
   if (!isLoaded) {
     return (
@@ -74,20 +63,6 @@ function App() {
 
   if (!isSignedIn) {
     return (
-<<<<<<< HEAD
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-secondary-50 to-primary-100">
-        <div className="max-w-md w-full mx-4">
-          <div className="bg-white rounded-2xl shadow-soft-xl p-8 text-center">
-            <div className="mb-8">
-              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-white">🎓</span>
-              </div>
-              <h1 className="text-2xl font-bold text-secondary-900 mb-2">
-                KNG
-              </h1>
-              <p className="text-secondary-600">
-                Academic Management Platform
-=======
       <div className="h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4 py-2 overflow-hidden relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-30" style={{
@@ -192,26 +167,10 @@ function App() {
                       </p>
                       <p className="text-gray-400 text-sm">
                         Streamline your academic journey
->>>>>>> 8744d5c (Initial commit)
               </p>
             </div>
             
             <div className="space-y-4">
-<<<<<<< HEAD
-              <p className="text-secondary-700 mb-6">
-                Welcome! Please sign in to access your academic dashboard and manage your institution's data.
-              </p>
-              
-              <SignInButton mode="modal">
-                <button className="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Sign In to Continue
-                </button>
-              </SignInButton>
-              
-              <p className="text-xs text-secondary-500 mt-4">
-                Secure authentication powered by Clerk
-              </p>
-=======
               <SignInButton mode="modal">
                         <button className="group w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -240,17 +199,12 @@ function App() {
                   </div>
                 </div>
               </div>
->>>>>>> 8744d5c (Initial commit)
             </div>
           </div>
         </div>
       </div>
     )
   }
-<<<<<<< HEAD
-
-=======
->>>>>>> 8744d5c (Initial commit)
   // If user is signed in but no profile exists in our database, show setup
   if (isSignedIn && !dbUser) {
     return <UserSetup />;
@@ -279,16 +233,6 @@ function App() {
             <Route path="reports" element={role === 'admin' ? <ReportsPage /> : <Navigate to="/" />} />
             <Route path="settings" element={role === 'admin' ? <SettingsPage /> : <Navigate to="/" />} />
             <Route path="approvals" element={role === 'admin' ? <ApprovalsPage /> : <Navigate to="/" />} />
-<<<<<<< HEAD
-            <Route path="departments" element={role === 'admin' ? <DepartmentList /> : <Navigate to="/" />} />
-            <Route path="people" element={role === 'admin' ? <PeopleList /> : <Navigate to="/" />} />
-            
-            {/* Teacher Routes */}
-            <Route path="classes" element={role === 'teacher' ? <ClassesPage /> : <Navigate to="/" />} />
-            <Route path="students" element={role === 'teacher' ? <StudentsPage /> : <Navigate to="/" />} />
-            <Route path="assignments" element={role === 'teacher' ? <AssignmentsPage /> : <Navigate to="/" />} />
-            <Route path="grades" element={role === 'teacher' ? <GradesPage /> : <Navigate to="/" />} />
-=======
             <Route path="departments" element={role === 'admin' ? <DepartmentsPage /> : <Navigate to="/" />} />
             <Route path="people" element={role === 'admin' ? <PeoplePage /> : <Navigate to="/" />} />
             
@@ -297,7 +241,6 @@ function App() {
             <Route path="students" element={<ProtectedRoute requiredRole="teacher"><StudentsPage /></ProtectedRoute>} />
             <Route path="assignments" element={<ProtectedRoute requiredRole="teacher"><AssignmentsPage /></ProtectedRoute>} />
             <Route path="grades" element={<ProtectedRoute requiredRole="teacher"><GradesPage /></ProtectedRoute>} />
->>>>>>> 8744d5c (Initial commit)
             
             {/* Student Routes */}
             <Route path="my-courses" element={role === 'student' ? <MyCoursesPage /> : <Navigate to="/" />} />
