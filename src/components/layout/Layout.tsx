@@ -81,7 +81,12 @@ export default function Layout({ children }: LayoutProps) {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const { role } = useAuth();
 
+<<<<<<< HEAD
   const navigation = getNavigationForRole(role || 'student');
+=======
+  const navigation = getNavigationForRole(role || 'teacher');
+  
+>>>>>>> 8744d5c (Initial commit)
 
   return (
     <div className="flex h-screen w-full">

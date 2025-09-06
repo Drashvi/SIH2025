@@ -10,6 +10,7 @@ import {
   IoChevronForwardOutline
 } from 'react-icons/io5'
 import { Card, CardHeader, CardTitle, CardContent, Button } from '../../components/ui'
+<<<<<<< HEAD
 
 // Mock data for schedule
 const weeklySchedule = [
@@ -146,6 +147,9 @@ const todayClasses = [
     status: 'upcoming'
   }
 ]
+=======
+import { getWeeklySchedule, getTodaySchedule, getWeeklyClassesCount, getTodayClassesCount } from '../../services/scheduleService'
+>>>>>>> 8744d5c (Initial commit)
 
 export default function SchedulePage() {
   const currentDate = new Date()
@@ -156,6 +160,14 @@ export default function SchedulePage() {
     day: 'numeric' 
   })
 
+<<<<<<< HEAD
+=======
+  // Get data from schedule service
+  const weeklySchedule = getWeeklySchedule()
+  const todaySchedule = getTodaySchedule()
+  const todayClasses = todaySchedule.classes
+
+>>>>>>> 8744d5c (Initial commit)
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -308,7 +320,11 @@ export default function SchedulePage() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Classes</p>
                 <p className="text-2xl font-bold text-gray-900">
+<<<<<<< HEAD
                   {weeklySchedule.reduce((sum, day) => sum + day.classes.length, 0)}
+=======
+                  {getWeeklyClassesCount()}
+>>>>>>> 8744d5c (Initial commit)
                 </p>
               </div>
             </div>
@@ -323,7 +339,11 @@ export default function SchedulePage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-600">Today's Classes</p>
+<<<<<<< HEAD
                 <p className="text-2xl font-bold text-gray-900">{todayClasses.length}</p>
+=======
+                <p className="text-2xl font-bold text-gray-900">{getTodayClassesCount()}</p>
+>>>>>>> 8744d5c (Initial commit)
               </div>
             </div>
           </CardContent>

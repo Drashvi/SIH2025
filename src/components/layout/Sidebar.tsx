@@ -16,11 +16,14 @@ export default function Sidebar({ navigation, sidebarOpen, setSidebarOpen, sideb
   const { role } = useAuth();
   const location = useLocation();
 
+<<<<<<< HEAD
   const userRole = role || 'admin';
 
   const filteredNavigation = navigation.filter(item => 
     item.roles.includes(userRole)
   );
+=======
+>>>>>>> 8744d5c (Initial commit)
 
   return (
     <>
@@ -66,7 +69,11 @@ export default function Sidebar({ navigation, sidebarOpen, setSidebarOpen, sideb
         
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-hide">
+<<<<<<< HEAD
           {filteredNavigation.map((item, index) => {
+=======
+          {navigation.map((item, index) => {
+>>>>>>> 8744d5c (Initial commit)
             const isActive = location.pathname === item.href
             
             return (
