@@ -1,36 +1,21 @@
 import { motion } from 'framer-motion'
-<<<<<<< HEAD
-=======
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
->>>>>>> 8744d5c (Initial commit)
 import {
   IoSchoolOutline,
   IoBookOutline,
   IoTrophyOutline,
   IoClipboardOutline,
   IoCalendarOutline,
-<<<<<<< HEAD
-  IoChatboxOutline,
-  IoLibraryOutline,
   IoTimeOutline,
-  IoStatsChartOutline,
-=======
-  IoTimeOutline,
->>>>>>> 8744d5c (Initial commit)
   IoNotificationsOutline,
   IoCheckmarkCircleOutline,
   IoWarningOutline,
   IoAlarmOutline
 } from 'react-icons/io5'
-<<<<<<< HEAD
-import { Card, CardHeader, CardTitle, CardContent, Button } from '../ui'
-import { useAuth } from '../../hooks/useAuth'
-=======
 import { Card, CardHeader, CardTitle, CardContent, Button, Modal, ModalBody, ModalFooter } from '../ui'
 import { useAuth } from '../../hooks/useAuth'
 import { getTodaySchedule, type ScheduleClass } from '../../services/scheduleService'
->>>>>>> 8744d5c (Initial commit)
 
 // Student-specific mock data
 const studentStatsData = [
@@ -41,12 +26,8 @@ const studentStatsData = [
     icon: IoSchoolOutline,
     color: 'bg-blue-500',
     bgColor: 'bg-blue-50',
-<<<<<<< HEAD
-    textColor: 'text-blue-700'
-=======
     textColor: 'text-blue-700',
     path: '/my-courses'
->>>>>>> 8744d5c (Initial commit)
   },
   {
     title: 'Overall GPA',
@@ -55,12 +36,8 @@ const studentStatsData = [
     icon: IoTrophyOutline,
     color: 'bg-yellow-500',
     bgColor: 'bg-yellow-50',
-<<<<<<< HEAD
-    textColor: 'text-yellow-700'
-=======
     textColor: 'text-yellow-700',
     path: '/my-grades'
->>>>>>> 8744d5c (Initial commit)
   },
   {
     title: 'Assignments',
@@ -69,12 +46,8 @@ const studentStatsData = [
     icon: IoClipboardOutline,
     color: 'bg-red-500',
     bgColor: 'bg-red-50',
-<<<<<<< HEAD
-    textColor: 'text-red-700'
-=======
     textColor: 'text-red-700',
     path: '/my-assignments'
->>>>>>> 8744d5c (Initial commit)
   },
   {
     title: 'Attendance',
@@ -83,41 +56,6 @@ const studentStatsData = [
     icon: IoCheckmarkCircleOutline,
     color: 'bg-green-500',
     bgColor: 'bg-green-50',
-<<<<<<< HEAD
-    textColor: 'text-green-700'
-  }
-]
-
-const upcomingClasses = [
-  {
-    id: 1,
-    time: '9:00 AM',
-    subject: 'Data Structures',
-    instructor: 'Dr. Smith',
-    room: 'Room 301',
-    status: 'next',
-    duration: '1h 30m'
-  },
-  {
-    id: 2,
-    time: '11:00 AM',
-    subject: 'Database Systems',
-    instructor: 'Prof. Johnson',
-    room: 'Lab 205',
-    status: 'upcoming',
-    duration: '2h'
-  },
-  {
-    id: 3,
-    time: '2:00 PM',
-    subject: 'Software Engineering',
-    instructor: 'Dr. Williams',
-    room: 'Room 108',
-    status: 'upcoming',
-    duration: '1h 30m'
-  }
-]
-=======
     textColor: 'text-green-700',
     path: '/attendance'
   }
@@ -139,7 +77,6 @@ const getUpcomingClasses = () => {
 }
 
 const upcomingClasses = getUpcomingClasses()
->>>>>>> 8744d5c (Initial commit)
 
 const recentStudentActivities = [
   {
@@ -207,48 +144,6 @@ const assignmentsDue = [
   }
 ]
 
-<<<<<<< HEAD
-const studentQuickActions = [
-  {
-    title: 'View Schedule',
-    description: 'Check today\'s classes',
-    icon: IoCalendarOutline,
-    color: 'bg-blue-500',
-    action: () => console.log('View schedule')
-  },
-  {
-    title: 'Submit Assignment',
-    description: 'Upload your work',
-    icon: IoClipboardOutline,
-    color: 'bg-green-500',
-    action: () => console.log('Submit assignment')
-  },
-  {
-    title: 'Check Grades',
-    description: 'View your performance',
-    icon: IoTrophyOutline,
-    color: 'bg-yellow-500',
-    action: () => console.log('Check grades')
-  },
-  {
-    title: 'Library Resources',
-    description: 'Access study materials',
-    icon: IoLibraryOutline,
-    color: 'bg-purple-500',
-    action: () => console.log('Library resources')
-  },
-  {
-    title: 'Contact Teacher',
-    description: 'Send a message',
-    icon: IoChatboxOutline,
-    color: 'bg-indigo-500',
-    action: () => console.log('Contact teacher')
-  }
-]
-
-export default function StudentDashboard() {
-  const { dbUser } = useAuth()
-=======
 
 
 export default function StudentDashboard() {
@@ -295,7 +190,6 @@ export default function StudentDashboard() {
   const displayedActivities = showAllActivities 
     ? recentStudentActivities 
     : recentStudentActivities.slice(0, 3)
->>>>>>> 8744d5c (Initial commit)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -347,26 +241,13 @@ export default function StudentDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight break-words truncate overflow-hidden">
-<<<<<<< HEAD
-            Welcome back, {dbUser?.full_name?.split(' ')[0] || 'User'}! 👨‍💼
-=======
             Welcome back, {dbUser?.full_name?.split(' ')[0] || 'User'}!
->>>>>>> 8744d5c (Initial commit)
           </h1>
           <p className="text-gray-600 mt-2 text-base sm:text-lg break-words truncate overflow-hidden">
             Here's your institution's comprehensive overview and management tools.
           </p>
         </div>
         <div className="flex items-center gap-3">
-<<<<<<< HEAD
-          <Button variant="outline" size="lg" className="shadow-md hover:shadow-lg">
-            <IoCalendarOutline className="w-5 h-5 mr-2" />
-            My Schedule
-          </Button>
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl">
-            <IoNotificationsOutline className="w-5 h-5 mr-2" />
-            Notifications
-=======
           <Button 
             variant="outline" 
             size="lg" 
@@ -376,37 +257,18 @@ export default function StudentDashboard() {
           >
             <IoCalendarOutline className="w-5 h-5 mr-2" />
             {scheduleLoading ? 'Loading...' : 'My Schedule'}
->>>>>>> 8744d5c (Initial commit)
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-=======
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 overflow-x-auto">
->>>>>>> 8744d5c (Initial commit)
         {studentStatsData.map((stat, index) => (
           <motion.div
             key={stat.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-<<<<<<< HEAD
-          >
-            <Card className="hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden">
-              <div className={`h-2 ${stat.color}`}></div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className={`p-4 rounded-2xl ${stat.bgColor}`}>
-                    <stat.icon className={`w-8 h-8 ${stat.textColor}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-<p className="text-sm font-semibold text-gray-600 uppercase tracking-wider truncate\">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900 truncate\">{stat.value}</p>
-                    <p className="text-sm text-gray-500 mt-1 truncate\">{stat.subtitle}</p>
-=======
             className="min-w-[200px]"
           >
             <Card 
@@ -423,7 +285,6 @@ export default function StudentDashboard() {
                     <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider">{stat.title}</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
                     <p className="text-sm text-gray-500 mt-1">{stat.subtitle}</p>
->>>>>>> 8744d5c (Initial commit)
                   </div>
                 </div>
               </CardContent>
@@ -432,18 +293,6 @@ export default function StudentDashboard() {
         ))}
       </div>
 
-<<<<<<< HEAD
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Today's Classes and Assignments */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 space-y-6"
-        >
-          {/* Today's Classes */}
-=======
       {/* Main Content - Vertical Layout */}
       <div className="space-y-8">
         {/* Today's Classes */}
@@ -452,7 +301,6 @@ export default function StudentDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
->>>>>>> 8744d5c (Initial commit)
           <Card className="shadow-xl border-0">
             <CardHeader className="bg-blue-50 border-b">
               <CardTitle className="flex items-center gap-3 text-xl">
@@ -506,10 +354,6 @@ export default function StudentDashboard() {
               ))}
             </CardContent>
           </Card>
-<<<<<<< HEAD
-
-          {/* Assignments Due */}
-=======
         </motion.div>
 
         {/* Assignments Due Soon */}
@@ -518,7 +362,6 @@ export default function StudentDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
->>>>>>> 8744d5c (Initial commit)
           <Card className="shadow-xl border-0">
             <CardHeader className="bg-orange-50 border-b">
               <CardTitle className="flex items-center gap-3 text-xl">
@@ -534,11 +377,7 @@ export default function StudentDashboard() {
                   key={assignment.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-<<<<<<< HEAD
-                  transition={{ delay: 0.6 + index * 0.1 }}
-=======
                   transition={{ delay: 0.7 + index * 0.1 }}
->>>>>>> 8744d5c (Initial commit)
                   className="p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all"
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -569,61 +408,12 @@ export default function StudentDashboard() {
           </Card>
         </motion.div>
 
-<<<<<<< HEAD
-        {/* Quick Actions & Recent Activities */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="space-y-6"
-        >
-          {/* Quick Actions */}
-          <Card className="shadow-xl border-0">
-            <CardHeader className="bg-purple-50 border-b">
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <div className="p-2 bg-purple-500 rounded-lg">
-                  <IoStatsChartOutline className="w-5 h-5 text-white" />
-                </div>
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-4">
-              {studentQuickActions.map((action, index) => (
-                <motion.div
-                  key={action.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                >
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start p-3 h-auto hover:bg-gray-50 hover:shadow-md transition-all"
-                    onClick={action.action}
-                  >
-                    <div className="flex items-center gap-3 w-full min-w-0">
-                      <div className={`p-2 ${action.color} rounded-lg text-white shadow-md`}>
-                        <action.icon className="w-4 h-4" />
-                      </div>
-                      <div className="text-left flex-1 min-w-0">
-                        <div className="font-semibold text-gray-900 text-sm truncate">{action.title}</div>
-                        <div className="text-xs text-gray-600 truncate">{action.description}</div>
-                      </div>
-                    </div>
-                  </Button>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Recent Activities */}
-=======
         {/* Recent Activities */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
         >
->>>>>>> 8744d5c (Initial commit)
           <Card className="shadow-xl border-0">
             <CardHeader className="bg-green-50 border-b">
               <CardTitle className="flex items-center gap-3 text-lg">
@@ -633,37 +423,12 @@ export default function StudentDashboard() {
                 Recent Activity
               </CardTitle>
             </CardHeader>
-<<<<<<< HEAD
-            <CardContent className="space-y-3 p-4">
-              {recentStudentActivities.map((activity, index) => (
-=======
             <CardContent className="space-y-4 p-6">
               {displayedActivities.map((activity, index) => (
->>>>>>> 8744d5c (Initial commit)
                 <motion.div
                   key={activity.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-<<<<<<< HEAD
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className={`p-2 rounded-lg ${getActivityStatusColor(activity.status)}`}>
-                    <activity.icon className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 text-sm truncate">{activity.title}</p>
-                    <p className="text-xs text-gray-600 truncate">{activity.course}</p>
-                    <p className="text-xs text-gray-500">{activity.time}</p>
-                  </div>
-                </motion.div>
-              ))}
-              <div className="pt-3 border-t border-gray-200">
-                <Button variant="ghost" className="w-full text-sm py-2">
-                  View All Activities
-                </Button>
-              </div>
-=======
                   transition={{ delay: 0.9 + index * 0.1 }}
                   className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
                 >
@@ -691,13 +456,10 @@ export default function StudentDashboard() {
                   </Button>
                 </div>
               )}
->>>>>>> 8744d5c (Initial commit)
             </CardContent>
           </Card>
         </motion.div>
       </div>
-<<<<<<< HEAD
-=======
 
       {/* Schedule Modal */}
       <Modal
@@ -802,7 +564,6 @@ export default function StudentDashboard() {
           </Button>
         </ModalFooter>
       </Modal>
->>>>>>> 8744d5c (Initial commit)
     </motion.div>
   )
 }
