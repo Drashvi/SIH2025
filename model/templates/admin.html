@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Admin Panel</title>
+  <style>
+    .msg { padding: 10px; margin: 10px 0; border-radius: 6px; }
+    .msg.success { background: #e0ffd8; color: #006600; }
+    .msg.error { background: #ffd8d8; color: #660000; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    table, th, td { border: 1px solid #333; padding: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+  {% if msg %}
+    {% set cls = 'success' if 'added' in msg or 'success' in msg|lower else 'error' %}
+    <div class="msg {{ cls }}">{{ msg }}</div>
+  {% endif %}
+
+  {% if camera_active %}
+    <div style="color: #a00; margin-bottom: 10px;">
+      Warning: Live camera stream is active. Stop it (<a href="{{ url_for('stop_camera') }}">Stop Camera</a>) before using camera-based capture.
+    </div>
+  {% endif %}
+
+  <h2>Register via Camera (capture ~{{150}} frames)</h2>
+  <form action="{{ url_for('capture_person') }}" method="post">
+    <label for="name_cam">Name:</label>
+    <input type="text" id="name_cam" name="name" required>
+    <button type="submit">Capture from Camera</button>
+  </form>
+
+  <h2>Register via Upload (multiple images)</h2>
+  <form action="{{ url_for('add_person_upload') }}" method="post" enctype="multipart/form-data">
+    <label for="name_up">Name:</label>
+    <input type="text" id="name_up" name="name" required><br><br>
+    <input type="file" name="images" multiple accept=".png,.jpg,.jpeg"><br><br>
+    <button type="submit">Upload & Add Person</button>
+  </form>
+
+  <h2>Attendance Records ({{ records|length }} rows)</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Time</th>
+    </tr>
+    {% for row in records %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <div style="margin-top: 20px;">
+    <a href="{{ url_for('index') }}">Back to Home</a>
+  </div>
+</body>
+</html>

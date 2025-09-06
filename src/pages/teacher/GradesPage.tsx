@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { motion } from 'framer-motion'
-import { IoTrophyOutline } from 'react-icons/io5'
-
-export default function GradesPage() {
-=======
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -226,7 +220,6 @@ export default function GradesPage() {
     )
   }
 
->>>>>>> 8744d5c (Initial commit)
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -234,15 +227,6 @@ export default function GradesPage() {
       transition={{ duration: 0.5 }}
       className="space-y-8"
     >
-<<<<<<< HEAD
-      <div className="text-center py-20">
-        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center">
-          <IoTrophyOutline className="w-12 h-12 text-yellow-600" />
-        </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-700 bg-clip-text text-transparent mb-2">Grades</h1>
-        <p className="text-gray-600">Manage student grades and evaluations</p>
-      </div>
-=======
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div>
@@ -553,7 +537,6 @@ export default function GradesPage() {
           </ModalFooter>
         </form>
       </Modal>
->>>>>>> 8744d5c (Initial commit)
     </motion.div>
   )
 }

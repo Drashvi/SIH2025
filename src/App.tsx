@@ -30,7 +30,7 @@ import StudentGradesPage from './pages/student/StudentGradesPage'
 
 // Shared Pages
 import CoursesPage from './pages/shared/CoursesPage'
-import AttendancePage from './pages/shared/AttendancePage'
+// import AttendancePage from './pages/shared/AttendancePage'
 
 
 function App() {
@@ -241,6 +241,7 @@ function App() {
             <Route path="students" element={<ProtectedRoute requiredRole="teacher"><StudentsPage /></ProtectedRoute>} />
             <Route path="assignments" element={<ProtectedRoute requiredRole="teacher"><AssignmentsPage /></ProtectedRoute>} />
             <Route path="grades" element={<ProtectedRoute requiredRole="teacher"><GradesPage /></ProtectedRoute>} />
+            <Route path="attendance" element={<ProtectedRoute requiredRole="teacher"><AttendancePage /></ProtectedRoute>} />
             
             {/* Student Routes */}
             <Route path="my-courses" element={role === 'student' ? <MyCoursesPage /> : <Navigate to="/" />} />

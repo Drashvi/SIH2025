@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { useState } from 'react'
-=======
 import { useState, useRef, useEffect } from 'react'
->>>>>>> 8744d5c (Initial commit)
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   IoMenuOutline,
@@ -11,15 +7,12 @@ import {
   IoPersonCircleOutline,
   IoChevronDownOutline,
   IoSettingsOutline,
-<<<<<<< HEAD
-=======
   IoClipboardOutline,
   IoTrophyOutline,
   IoAlarmOutline,
   IoWarningOutline,
   IoCheckmarkOutline,
   IoTrashOutline
->>>>>>> 8744d5c (Initial commit)
 } from 'react-icons/io5'
 import { useAuth } from '../../hooks/useAuth'
 import { Button } from '../ui'
@@ -31,12 +24,6 @@ interface HeaderProps {
   setSidebarExpanded: (expanded: boolean) => void;
 }
 
-<<<<<<< HEAD
-export default function Header({ setSidebarOpen, sidebarExpanded, setSidebarExpanded }: HeaderProps) {
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const { dbUser } = useAuth()
-
-=======
 // Notification data
 const notificationsData = [
   {
@@ -143,7 +130,6 @@ export default function Header({ setSidebarOpen, sidebarExpanded, setSidebarExpa
     setNotifications([])
   }
 
->>>>>>> 8744d5c (Initial commit)
   return (
     <header className="bg-white border-b border-secondary-200 shadow-sm sticky top-0 z-30">
       <div className="flex items-center justify-between h-14 sm:h-16 px-3 sm:px-4 md:px-6 lg:px-8">
@@ -175,16 +161,6 @@ export default function Header({ setSidebarOpen, sidebarExpanded, setSidebarExpa
         {/* Right section */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Notifications */}
-<<<<<<< HEAD
-          <Button
-            variant="ghost"
-            size="sm"
-            className="!p-1.5 sm:!p-2 relative"
-          >
-            <IoNotificationsOutline className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="absolute -top-0.5 sm:-top-1 -right-0.5 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-danger-500 rounded-full text-[8px] sm:text-[10px] text-white flex items-center justify-center">3</span>
-          </Button>
-=======
           <div className="relative" ref={notificationRef}>
             <Button
               variant="ghost"
@@ -301,7 +277,6 @@ export default function Header({ setSidebarOpen, sidebarExpanded, setSidebarExpa
               )}
             </AnimatePresence>
           </div>
->>>>>>> 8744d5c (Initial commit)
           
           {/* User menu */}
           <div className="relative">

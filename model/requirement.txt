@@ -1,0 +1,8 @@
+flask
+flask-cors
+keras-facenet==0.3.2
+mtcnn==0.1.0
+scikit-learn
+joblib==1.4.2
+numpy
+opencv-python
