@@ -1,8 +1,5 @@
 import { motion } from 'framer-motion'
-<<<<<<< HEAD
-=======
 import { useNavigate } from 'react-router-dom'
->>>>>>> 8744d5c (Initial commit)
 import {
   IoBookOutline,
   IoPeopleOutline,
@@ -138,48 +135,6 @@ const recentTeacherActivities = [
   }
 ]
 
-<<<<<<< HEAD
-const teacherQuickActions = [
-  {
-    title: 'Take Attendance',
-    description: 'Mark today\'s attendance',
-    icon: IoClipboardOutline,
-    color: 'bg-green-500',
-    action: () => console.log('Take attendance')
-  },
-  {
-    title: 'Create Assignment',
-    description: 'Add new assignment',
-    icon: IoDocumentTextOutline,
-    color: 'bg-blue-500',
-    action: () => console.log('Create assignment')
-  },
-  {
-    title: 'Grade Submissions',
-    description: 'Review student work',
-    icon: IoTrophyOutline,
-    color: 'bg-purple-500',
-    action: () => console.log('Grade submissions')
-  },
-  {
-    title: 'Send Message',
-    description: 'Contact students/parents',
-    icon: IoChatboxOutline,
-    color: 'bg-indigo-500',
-    action: () => console.log('Send message')
-  },
-  {
-    title: 'Class Materials',
-    description: 'Upload resources',
-    icon: IoLibraryOutline,
-    color: 'bg-teal-500',
-    action: () => console.log('Upload materials')
-  }
-]
-
-export default function TeacherDashboard() {
-  const { dbUser } = useAuth()
-=======
 export default function TeacherDashboard() {
   const { dbUser } = useAuth()
   const navigate = useNavigate()
@@ -228,7 +183,6 @@ export default function TeacherDashboard() {
       action: () => navigate('/classes')
     }
   ]
->>>>>>> 8744d5c (Initial commit)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -259,13 +213,6 @@ export default function TeacherDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-<<<<<<< HEAD
-          <Button variant="outline" size="lg" className="shadow-md hover:shadow-lg">
-            <IoCalendarOutline className="w-5 h-5 mr-2" />
-            My Schedule
-          </Button>
-          <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 shadow-lg hover:shadow-xl">
-=======
           <Button 
             variant="outline" 
             size="lg" 
@@ -280,7 +227,6 @@ export default function TeacherDashboard() {
             className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 shadow-lg hover:shadow-xl"
             onClick={() => navigate('/assignments')}
           >
->>>>>>> 8744d5c (Initial commit)
             <IoAddOutline className="w-5 h-5 mr-2" />
             Quick Actions
           </Button>
@@ -288,31 +234,13 @@ export default function TeacherDashboard() {
       </div>
 
       {/* Stats Cards */}
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-=======
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 overflow-x-auto">
->>>>>>> 8744d5c (Initial commit)
         {teacherStatsData.map((stat, index) => (
           <motion.div
             key={stat.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-<<<<<<< HEAD
-          >
-            <Card className="hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden">
-              <div className={`h-2 ${stat.color}`}></div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className={`p-4 rounded-2xl ${stat.bgColor}`}>
-                    <stat.icon className={`w-8 h-8 ${stat.textColor}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider truncate">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900 truncate">{stat.value}</p>
-                    <p className="text-sm text-gray-500 mt-1 truncate">{stat.subtitle}</p>
-=======
             className="min-w-[200px]"
           >
             <Card className="hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden h-full">
@@ -326,7 +254,6 @@ export default function TeacherDashboard() {
                     <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider">{stat.title}</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
                     <p className="text-sm text-gray-500 mt-1">{stat.subtitle}</p>
->>>>>>> 8744d5c (Initial commit)
                   </div>
                 </div>
               </CardContent>
@@ -386,15 +313,11 @@ export default function TeacherDashboard() {
                           Now
                         </div>
                       ) : (
-<<<<<<< HEAD
-                        <Button size="sm" variant="outline">
-=======
                         <Button 
                           size="sm" 
                           variant="outline"
                           onClick={() => navigate('/classes')}
                         >
->>>>>>> 8744d5c (Initial commit)
                           <IoBookOutline className="w-4 h-4 mr-1" />
                           Prepare
                         </Button>
@@ -486,15 +409,11 @@ export default function TeacherDashboard() {
                 </motion.div>
               ))}
               <div className="pt-3 border-t border-gray-200">
-<<<<<<< HEAD
-                <Button variant="ghost" className="w-full text-sm py-2">
-=======
                 <Button 
                   variant="ghost" 
                   className="w-full text-sm py-2"
                   onClick={() => navigate('/grades')}
                 >
->>>>>>> 8744d5c (Initial commit)
                   View All Activities
                 </Button>
               </div>
