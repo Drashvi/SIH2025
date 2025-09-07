@@ -13,14 +13,6 @@ interface SidebarProps {
   sidebarExpanded: boolean;
 }
 
-const teacherNavItems: NavItem[] = [
-  {
-    name: "Attendance",
-    href: "/attendance",
-    icon: IoClipboardOutline,
-    roles: ["teacher"],
-  },
-];
 
 export default function Sidebar({ navigation, sidebarOpen, setSidebarOpen, sidebarExpanded }: SidebarProps) {
   const { role } = useAuth();
@@ -71,7 +63,7 @@ export default function Sidebar({ navigation, sidebarOpen, setSidebarOpen, sideb
         
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-hide">
-          {navigation.concat(teacherNavItems).filter(item => item.roles.includes(role as any)).map((item, index) => {
+          {navigation.filter(item => item.roles.includes(role as any)).map((item, index) => {
             const isActive = location.pathname === item.href
             
             return (

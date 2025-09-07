@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SignInButton } from '@clerk/clerk-react'
+import { Toaster } from 'react-hot-toast'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import UserSetup from './components/auth/UserSetup'
 import ApprovalStatusHandler from './components/auth/ApprovalStatusHandler'
 import { useAuth } from './hooks/useAuth'
+import { useState, useEffect } from 'react'
 
 // Admin Pages
 import AnalyticsPage from './pages/admin/AnalyticsPage'
@@ -19,6 +21,7 @@ import ClassesPage from './pages/teacher/ClassesPage'
 import StudentsPage from './pages/teacher/StudentsPage'
 import AssignmentsPage from './pages/teacher/AssignmentsPage'
 import GradesPage from './pages/teacher/GradesPage'
+import TeacherAttendancePage from './pages/teacher/AttendancePage'
 import SchedulePage from './pages/shared/SchedulePage'
 import MessagesPage from './pages/shared/MessagesPage'
 
@@ -30,12 +33,24 @@ import StudentGradesPage from './pages/student/StudentGradesPage'
 
 // Shared Pages
 import CoursesPage from './pages/shared/CoursesPage'
-// import AttendancePage from './pages/shared/AttendancePage'
+import AttendancePage from './pages/shared/AttendancePage'
 
 
 function App() {
   const { isSignedIn, isLoaded, dbUser, approvalStatus, role } = useAuth()
+  const [forceLoad, setForceLoad] = useState(false)
   
+  // Add a timeout to prevent infinite loading if Convex is not available
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isLoaded && !isSignedIn) {
+        console.warn('Loading timeout - forcing app to load. Convex may not be available.')
+        setForceLoad(true)
+      }
+    }, 5000) // 5 second timeout
+    
+    return () => clearTimeout(timer)
+  }, [isLoaded, isSignedIn])
   
   // Create a route protection component
   const ProtectedRoute = ({ children, requiredRole }: { children: React.ReactNode, requiredRole: string }) => {
@@ -50,12 +65,15 @@ function App() {
     return <Navigate to="/" replace />
   }
 
-  if (!isLoaded) {
+  if (!isLoaded && !forceLoad) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-secondary-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
           <p className="text-secondary-600 mt-4 text-lg">Loading...</p>
+          {!isSignedIn && (
+            <p className="text-secondary-500 mt-2 text-sm">If this takes too long, there might be a backend issue.</p>
+          )}
         </div>
       </div>
     )
@@ -224,6 +242,30 @@ function App() {
   return (
     <BrowserRouter>
       <div className="w-full min-h-screen">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 5000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
@@ -241,7 +283,7 @@ function App() {
             <Route path="students" element={<ProtectedRoute requiredRole="teacher"><StudentsPage /></ProtectedRoute>} />
             <Route path="assignments" element={<ProtectedRoute requiredRole="teacher"><AssignmentsPage /></ProtectedRoute>} />
             <Route path="grades" element={<ProtectedRoute requiredRole="teacher"><GradesPage /></ProtectedRoute>} />
-            <Route path="attendance" element={<ProtectedRoute requiredRole="teacher"><AttendancePage /></ProtectedRoute>} />
+            <Route path="attendance" element={<ProtectedRoute requiredRole="teacher"><TeacherAttendancePage /></ProtectedRoute>} />
             
             {/* Student Routes */}
             <Route path="my-courses" element={role === 'student' ? <MyCoursesPage /> : <Navigate to="/" />} />
@@ -253,7 +295,6 @@ function App() {
             <Route path="courses" element={<CoursesPage />} />
             <Route path="schedule" element={<SchedulePage />} />
             <Route path="messages" element={<MessagesPage />} />
-            <Route path="attendance" element={<AttendancePage />} />
           </Route>
         </Routes>
       </div>

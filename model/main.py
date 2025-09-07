@@ -8,18 +8,13 @@ from keras_facenet import FaceNet
 from mtcnn import MTCNN
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime, timedelta
-from functools import wraps
-from dotenv import load_dotenv
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import traceback
 
-# -------------------- Load env --------------------
-load_dotenv()
-API_KEY = os.environ.get("API_KEY")  # set in your .env
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://localhost:5175"]}})
 
 # -------------------- Config --------------------
 DATABASE_PATH = "face_database_multiple.joblib"
@@ -30,7 +25,6 @@ BOX_DISPLAY_TIME = 2  # seconds
 CAPTURE_COUNT = 150
 FRAME_SKIP_INTERVAL = 5 # Process every 5th frame
 UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 # -------------------- Load DB --------------------
@@ -61,20 +55,62 @@ display_timers = {}
 camera_active = False
 attendance_active = False
 
-# -------------------- Helpers --------------------
-def require_api_key(view_func):
-    @wraps(view_func)
-    def wrapped(*args, **kwargs):
-        key = request.headers.get("x-api-key")
-        if not API_KEY:
-            return jsonify({"error": "Server misconfigured (no API_KEY set)."}), 500
-        if not key or key != API_KEY:
-            return jsonify({"error": "Unauthorized"}), 401
-        return view_func(*args, **kwargs)
-    return wrapped
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def process_uploaded_image(image_file):
+    """Process uploaded image and extract face embedding"""
+    try:
+        # Save the uploaded file temporarily
+        filename = secure_filename(image_file.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        image_file.save(filepath)
+        
+        # Read and process the image
+        img = cv2.imread(filepath)
+        if img is None:
+            os.remove(filepath)  # Clean up
+            return None, "Could not read the uploaded image"
+            
+        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        faces = detector.detect_faces(rgb)
+        
+        if not faces:
+            os.remove(filepath)  # Clean up
+            return None, "No face detected in the uploaded image"
+            
+        # Get the first detected face
+        face = faces[0]
+        confidence = face.get('confidence', 0)
+        
+        if confidence < 0.9:
+            os.remove(filepath)  # Clean up
+            return None, f"Face detection confidence too low: {confidence:.2f}"
+            
+        x, y, w, h = face.get('box', (0, 0, 0, 0))
+        x, y = max(0, x), max(0, y)
+        w, h = max(1, w), max(1, h)
+        roi = rgb[y:y+h, x:x+w]
+        
+        if roi.size == 0:
+            os.remove(filepath)  # Clean up
+            return None, "Invalid face region detected"
+            
+        # Generate face embedding
+        face_resized = cv2.resize(roi, (160, 160))
+        embedding = embedder.embeddings([face_resized])[0]
+        
+        # Clean up temporary file
+        os.remove(filepath)
+        
+        return embedding, None
+        
+    except Exception as e:
+        # Clean up temporary file if it exists
+        if 'filepath' in locals() and os.path.exists(filepath):
+            os.remove(filepath)
+        return None, f"Error processing image: {str(e)}"
 
 def mark_attendance(name):
     if attendance_active and name not in marked and name != "Unknown":
@@ -120,268 +156,228 @@ def generate_frames():
                 break
 
             frame_count += 1
-            if frame_count % FRAME_SKIP_INTERVAL != 0:
-                # Still send the frame, but don't process for faces
-                ret, buffer = cv2.imencode('.jpg', frame)
-                frame_bytes = buffer.tobytes()
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-                continue
-
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            faces = detector.detect_faces(rgb)
             current_time = datetime.now()
+            
+            # Process every frame for face detection (remove frame skipping for better detection)
+            try:
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                faces = detector.detect_faces(rgb)
 
-            if faces:
-                f = faces[0]
-                x, y, w, h = f.get('box', (0,0,0,0))
-                x, y = max(0, x), max(0, y)
-                w, h = max(1, w), max(1, h)
-                roi = rgb[y:y+h, x:x+w]
-
-                if roi.size != 0:
-                    try:
-                        face_resized = cv2.resize(roi, (160, 160))
-                        emb = embedder.embeddings([face_resized])[0]
-                        name = recognize_face(emb, database)
-                        color = (0, 255, 0) if name != "Unknown" else (0, 0, 255)
-
-                        if name != "Unknown" and attendance_active:
-                            mark_attendance(name)
-                            display_timers[name] = current_time + timedelta(seconds=BOX_DISPLAY_TIME)
-
-                        if name in display_timers and current_time <= display_timers[name]:
-                            cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-                            cv2.putText(frame, name, (x, y-10),
-                                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
-                    except Exception:
-                        # skip any bad frame
-                        pass
+                # Process all detected faces, not just the first one
+                for face in faces:
+                    x, y, w, h = face.get('box', (0, 0, 0, 0))
+                    confidence = face.get('confidence', 0)
+                    
+                    # Only process faces with good confidence (> 0.9)
+                    if confidence > 0.9:
+                        x, y = max(0, x), max(0, y)
+                        x2, y2 = min(frame.shape[1], x + w), min(frame.shape[0], y + h)
+                        w, h = x2 - x, y2 - y
+                        
+                        if w > 30 and h > 30:  # Minimum face size
+                            roi = rgb[y:y+h, x:x+w]
+                            
+                            if roi.size > 0:
+                                try:
+                                    # Ensure ROI has correct shape
+                                    if len(roi.shape) == 3 and roi.shape[2] == 3:
+                                        face_resized = cv2.resize(roi, (160, 160))
+                                        emb = embedder.embeddings([face_resized])[0]
+                                        name = recognize_face(emb, database)
+                                        
+                                        # Always draw bounding box for detected faces
+                                        if name != "Unknown":
+                                            color = (0, 255, 0)  # Green for known faces
+                                            if attendance_active:
+                                                mark_attendance(name)
+                                            display_timers[name] = current_time + timedelta(seconds=BOX_DISPLAY_TIME)
+                                        else:
+                                            color = (0, 0, 255)  # Red for unknown faces
+                                        
+                                        # Draw rectangle and label
+                                        cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
+                                        
+                                        # Add background for text readability
+                                        label = f"{name} ({confidence:.2f})"
+                                        label_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)[0]
+                                        cv2.rectangle(frame, (x, y-label_size[1]-10), (x+label_size[0], y), color, -1)
+                                        cv2.putText(frame, label, (x, y-5),
+                                                  cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+                                        
+                                except Exception as e:
+                                    print(f"Face processing error: {e}")
+                                    # Still draw a basic detection box
+                                    cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+                                    cv2.putText(frame, "Processing...", (x, y-5),
+                                              cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
+                            
+            except Exception as e:
+                print(f"Face detection error: {e}")
+                pass
 
             # encode and yield
             try:
                 ret, buffer = cv2.imencode('.jpg', frame)
-                frame_bytes = buffer.tobytes()
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-            except Exception:
+                if ret:
+                    frame_bytes = buffer.tobytes()
+                    yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            except Exception as e:
+                print(f"Frame encoding error: {e}")
                 continue
     finally:
         cap.release()
 
 # -------------------- Routes (UI) --------------------
-@app.route('/')
-def index():
-    return render_template('index.html')
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
-@app.route('/video')
+@app.route('/api/video')
 def video():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/start')
-def start_camera():
-    global camera_active
-    camera_active = True
-    return redirect(url_for('index'))
+# @app.route('/start')
+# def start_camera():
+#     global camera_active
+#     camera_active = True
+#     return redirect(url_for('index'))
 
-@app.route('/stop')
-def stop_camera():
-    global camera_active, attendance_active
-    camera_active = False
-    attendance_active = False
-    return redirect(url_for('index'))
+# @app.route('/stop')
+# def stop_camera():
+#     global camera_active, attendance_active
+#     camera_active = False
+#     attendance_active = False
+#     return redirect(url_for('index'))
 
-@app.route('/toggle_attendance')
-def toggle_attendance():
-    global attendance_active
-    attendance_active = not attendance_active
-    return redirect(url_for('index'))
+# @app.route('/toggle_attendance')
+# def toggle_attendance():
+#     global attendance_active
+#     attendance_active = not attendance_active
+#     return redirect(url_for('index'))
 
-# -------------------- Admin page --------------------
-@app.route('/admin')
-def admin():
-    msg = request.args.get('msg')
-    records = []
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            reader = csv.reader(f)
-            records = list(reader)
-    return render_template('admin.html', records=records, msg=msg, camera_active=bool(camera_active))
 
-# -------------------- Add person via file upload (/add_person) --------------------
-@app.route('/add_person', methods=['POST'])
-def add_person_upload():
+# -------------------- Add Person Functionality --------------------
+@app.route('/api/add_person', methods=['POST'])
+def api_add_person():
+    """Add a person to the database via uploaded images"""
     try:
+        # Get the person's name from form data
         name = request.form.get('name')
-        if not name:
-            return redirect(url_for('admin', msg="Error: Name is required."))
-
-        images = request.files.getlist('images')
-        if not images or len(images) == 0:
-            return redirect(url_for('admin', msg="Error: No images uploaded."))
-
+        if not name or not name.strip():
+            return jsonify({"error": "Person name is required"}), 400
+            
+        name = name.strip()
+        
+        # Get uploaded files
+        if 'images' not in request.files:
+            return jsonify({"error": "No images uploaded"}), 400
+            
+        files = request.files.getlist('images')
+        if not files or len(files) == 0:
+            return jsonify({"error": "No images uploaded"}), 400
+            
         embeddings = []
-        saved_count = 0
-        for file in images:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(UPLOAD_FOLDER, filename)
-                file.save(filepath)
-                saved_count += 1
-
-                # read and process
-                img = cv2.imread(filepath)
-                if img is None:
-                    continue
-                rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                faces = detector.detect_faces(rgb)
-                if not faces:
-                    continue
-                x, y, w, h = faces[0].get('box', (0,0,0,0))
-                x, y = max(0, x), max(0, y)
-                w, h = max(1, w), max(1, h)
-                roi = rgb[y:y+h, x:x+w]
-                if roi.size == 0:
-                    continue
-                try:
-                    face_resized = cv2.resize(roi, (160, 160))
-                    emb = embedder.embeddings([face_resized])[0]
-                    embeddings.append(emb)
-                except Exception:
-                    continue
-
+        processed_count = 0
+        errors = []
+        
+        # Process each uploaded image
+        for file in files:
+            if file and file.filename and allowed_file(file.filename):
+                embedding, error = process_uploaded_image(file)
+                if embedding is not None:
+                    embeddings.append(embedding)
+                    processed_count += 1
+                else:
+                    errors.append(f"File {file.filename}: {error}")
+                    
         if not embeddings:
-            return redirect(url_for('admin', msg="No faces detected in uploaded images."))
-
+            return jsonify({
+                "error": "No valid faces detected in uploaded images",
+                "details": errors
+            }), 400
+            
+        # Add to database
         if name in database:
             database[name].extend(embeddings)
         else:
             database[name] = embeddings
+            
+        # Save database
         joblib.dump(database, DATABASE_PATH)
-        return redirect(url_for('admin', msg=f"{name} added with {len(embeddings)} embeddings (from {saved_count} files)."))
+        
+        response_data = {
+            "status": "success",
+            "message": f"Successfully added {name} to the database",
+            "embeddings_added": len(embeddings),
+            "images_processed": processed_count,
+            "total_embeddings": len(database[name])
+        }
+        
+        if errors:
+            response_data["warnings"] = errors
+            
+        return jsonify(response_data), 200
+        
     except Exception as e:
+        print(f"Error in add_person: {str(e)}")
         traceback.print_exc()
-        return redirect(url_for('admin', msg=f"Error during upload: {str(e)}"))
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
-# -------------------- Capture person via camera (/capture_person) --------------------
-@app.route('/capture_person', methods=['POST'])
-def capture_person():
-    global camera_active
+@app.route('/api/get_people', methods=['GET'])
+def api_get_people():
+    """Get list of people in the database"""
     try:
-        name = request.form.get('name')
-        if not name:
-            return redirect(url_for('admin', msg="Error: Name is required."))
-
-        # Prevent conflict if camera is already streaming
-        if camera_active:
-            return redirect(url_for('admin', msg="Error: Camera is active for attendance. Stop it before adding a person."))
-
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            return redirect(url_for('admin', msg="Error: Could not open camera."))
-
-        embeddings = []
-        count = 0
-        try:
-            while count < CAPTURE_COUNT:
-                ret, frame = cap.read()
-                if not ret or frame is None:
-                    break
-
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                faces = detector.detect_faces(rgb)
-
-                if faces:
-                    x, y, w, h = faces[0].get('box', (0,0,0,0))
-                    x, y = max(0, x), max(0, y)
-                    w, h = max(1, w), max(1, h)
-                    roi = rgb[y:y+h, x:x+w]
-                    if roi.size == 0:
-                        continue
-                    try:
-                        face_resized = cv2.resize(roi, (160, 160))
-                        emb = embedder.embeddings([face_resized])[0]
-                        embeddings.append(emb)
-                        count += 1
-                    except Exception:
-                        continue
-        finally:
-            cap.release()
-
-        if not embeddings:
-            return redirect(url_for('admin', msg="No faces captured."))
-
-        if name in database:
-            database[name].extend(embeddings)
-        else:
-            database[name] = embeddings
-        joblib.dump(database, DATABASE_PATH)
-        return redirect(url_for('admin', msg=f"{name} added with {len(embeddings)} embeddings (camera)."))
+        people_info = []
+        for name, embeddings in database.items():
+            people_info.append({
+                "name": name,
+                "embedding_count": len(embeddings)
+            })
+            
+        return jsonify({
+            "people": people_info,
+            "total_count": len(database)
+        }), 200
+        
     except Exception as e:
-        traceback.print_exc()
-        return redirect(url_for('admin', msg=f"Error during capture: {str(e)}"))
+        print(f"Error in get_people: {str(e)}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
-# -------------------- API: Capture via camera (JSON) --------------------
-@app.route('/api/capture_person', methods=['POST'])
-@require_api_key
-def api_capture_person():
+@app.route('/api/delete_person', methods=['DELETE'])
+def api_delete_person():
+    """Delete a person from the database"""
     try:
         data = request.get_json()
-        if not data or "name" not in data:
-            return jsonify({"error": "Name is required"}), 400
-
-        name = data["name"]
-
-        # Prevent conflict if camera is already streaming
-        if camera_active:
-            return jsonify({"error": "Camera is active for attendance. Stop it before adding a person."}), 400
-
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            return jsonify({"error": "Could not open camera."}), 500
-
-        embeddings = []
-        count = 0
-        try:
-            while count < CAPTURE_COUNT:
-                ret, frame = cap.read()
-                if not ret or frame is None:
-                    break
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                faces = detector.detect_faces(rgb)
-                if faces:
-                    x, y, w, h = faces[0].get('box', (0,0,0,0))
-                    x, y = max(0, x), max(0, y)
-                    w, h = max(1, w), max(1, h)
-                    roi = rgb[y:y+h, x:x+w]
-                    if roi.size == 0:
-                        continue
-                    try:
-                        face_resized = cv2.resize(roi, (160, 160))
-                        emb = embedder.embeddings([face_resized])[0]
-                        embeddings.append(emb)
-                        count += 1
-                    except Exception:
-                        continue
-        finally:
-            cap.release()
-
-        if not embeddings:
-            return jsonify({"error": "No faces captured"}), 400
-
-        if name in database:
-            database[name].extend(embeddings)
-        else:
-            database[name] = embeddings
+        if not data or 'name' not in data:
+            return jsonify({"error": "Person name is required"}), 400
+            
+        name = data['name'].strip()
+        if not name:
+            return jsonify({"error": "Person name is required"}), 400
+            
+        if name not in database:
+            return jsonify({"error": f"Person '{name}' not found in database"}), 404
+            
+        # Remove from database
+        del database[name]
+        
+        # Save database
         joblib.dump(database, DATABASE_PATH)
-        return jsonify({"status": f"{name} added successfully", "embeddings_count": len(embeddings)})
+        
+        return jsonify({
+            "status": "success",
+            "message": f"Successfully deleted {name} from the database"
+        }), 200
+        
     except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
+        print(f"Error in delete_person: {str(e)}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+# -------------------- API: Capture via camera (JSON) --------------------
 
 # -------------------- Secure API endpoints --------------------
 @app.route('/api/start', methods=['POST'])
-@require_api_key
 def api_start():
     global camera_active, attendance_active
     camera_active = True
@@ -389,7 +385,6 @@ def api_start():
     return jsonify({"status": "Camera started, attendance active"})
 
 @app.route('/api/stop', methods=['POST'])
-@require_api_key
 def api_stop():
     global camera_active, attendance_active
     camera_active = False
@@ -397,7 +392,6 @@ def api_stop():
     return jsonify({"status": "Camera stopped, attendance stopped"})
 
 @app.route('/api/attendance', methods=['GET'])
-@require_api_key
 def api_attendance():
     records = []
     if os.path.exists(filename):
@@ -409,7 +403,6 @@ def api_attendance():
     return jsonify({"date": date_str, "records": records})
 
 @app.route('/api/status', methods=['GET'])
-@require_api_key
 def api_status():
     return jsonify({
         "camera_active": bool(camera_active),
@@ -418,4 +411,5 @@ def api_status():
     })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    app.run(debug=True, host='127.0.0.1', port=5000, threaded=True)
