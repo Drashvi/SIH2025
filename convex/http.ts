@@ -1,8 +1,7 @@
-
 import type { WebhookEvent } from "@clerk/clerk-sdk-node";
 import { httpRouter } from "convex/server";
 import { Webhook } from "svix";
-import { internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 
 const http = httpRouter();
@@ -15,7 +14,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
   switch (event.type) {
     case "user.created":
       // Check if the user already exists
-      const existingUser = await ctx.runQuery(internal.people.getPersonByUserId, {
+      const existingUser = await ctx.runQuery(api.people.getPersonByUserId, {
         userId: event.data.id,
       });
 
@@ -25,12 +24,11 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
       }
 
       // Create the new user
-      await ctx.runMutation(internal.people.createPerson, {
+      await ctx.runMutation(api.people.createPerson, {
         user_id: event.data.id,
-        email: event.data.email_addresses[0]?.email_address ?? "No email",
-        full_name: `${event.data.first_name ?? ''} ${event.data.last_name ?? ''}`.trim(),
-        role: "student", // Default role for new users
-        approval_status: "approved", // Auto-approve new users
+        full_name: `${event.data.first_name} ${event.data.last_name}`,
+        email: event.data.email_addresses[0]?.email_address ?? '',
+        role: 'student', 
       });
       break;
     case "user.updated":

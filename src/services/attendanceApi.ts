@@ -1,18 +1,15 @@
 // API service for Flask face detection attendance system
-import type { AttendanceRecord, AttendanceResponse, ApiStatus, ApiResponse } from './types';
+import type { AttendanceResponse, ApiStatus, ApiResponse } from './types';
 
 // Re-export types for convenience
 export type { AttendanceRecord, AttendanceResponse, ApiStatus, ApiResponse } from './types';
 
 class AttendanceApiService {
   private baseUrl: string;
-  private apiKey: string;
 
   constructor() {
     // Flask backend URL - adjust if your Flask server runs on a different port
     this.baseUrl = 'http://127.0.0.1:5000';
-    // You should get this from environment variables in production
-    this.apiKey = import.meta.env.VITE_FLASK_API_KEY || 'your-api-key-here';
   }
 
   private getHeaders(): HeadersInit {

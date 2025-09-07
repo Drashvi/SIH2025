@@ -8,7 +8,6 @@ import {
   IoTrashOutline,
   IoEyeOutline,
   IoPeopleOutline,
-  IoBookOutline,
   IoStatsChartOutline,
   IoCheckmarkOutline,
   IoCloseOutline
@@ -16,11 +15,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Modal, ModalBody, ModalFooter } from '../../components/ui'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
-import type { Id } from '../../../convex/_generated/dataModel'
+import type { Id, Doc } from '../../../convex/_generated/dataModel'
 
 export default function DepartmentsPage() {
   const [showModal, setShowModal] = useState(false)
-  const [editingDepartment, setEditingDepartment] = useState<any>(null)
+  const [editingDepartment, setEditingDepartment] = useState<Doc<"departments"> | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   
   // Form state
@@ -49,10 +48,12 @@ export default function DepartmentsPage() {
       if (editingDepartment) {
         await updateDepartment({
           id: editingDepartment._id,
-          ...formData
+          ...formData,
+          head_of_department: formData.head_of_department || undefined,
+          liaison_teacher: formData.liaison_teacher || undefined,
         })
       } else {
-        await createDepartment(formData)
+        await createDepartment({ ...formData, head_of_department: formData.head_of_department || undefined, liaison_teacher: formData.liaison_teacher || undefined,})
       }
       setShowModal(false)
       setEditingDepartment(null)
@@ -66,7 +67,7 @@ export default function DepartmentsPage() {
     }
   }
 
-  const handleEdit = (department: any) => {
+  const handleEdit = (department: Doc<"departments">) => {
     setEditingDepartment(department)
     setFormData({
       department_name: department.department_name,
@@ -155,21 +156,6 @@ export default function DepartmentsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-500">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <IoBookOutline className="w-6 h-6 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Courses</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {departments.reduce((sum, dept) => sum + (dept.courses?.length || 0), 0)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         <Card className="border-l-4 border-l-orange-500">
           <CardContent className="p-6">

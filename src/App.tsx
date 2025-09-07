@@ -33,7 +33,6 @@ import StudentGradesPage from './pages/student/StudentGradesPage'
 
 // Shared Pages
 import CoursesPage from './pages/shared/CoursesPage'
-import AttendancePage from './pages/shared/AttendancePage'
 
 
 function App() {

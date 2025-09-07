@@ -5,7 +5,6 @@ import {
   IoSearchOutline, 
   IoDownloadOutline,
   IoTimeOutline,
-  IoPersonOutline,
   IoStarOutline,
   IoFilterOutline,
   IoGridOutline,

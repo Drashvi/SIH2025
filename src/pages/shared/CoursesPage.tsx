@@ -4,18 +4,13 @@ import {
   IoBookOutline,
   IoAddOutline,
   IoSearchOutline,
-  IoFilterOutline,
   IoPencilOutline,
   IoTrashOutline,
-  IoEyeOutline,
-  IoCheckmarkOutline,
-  IoCloseOutline,
   IoPersonOutline,
   IoSchoolOutline,
   IoCalendarOutline,
-  IoLibraryOutline
 } from 'react-icons/io5'
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Modal, ModalBody, ModalFooter, Table } from '../../components/ui'
+import { Card, CardContent, Button, Input, Modal, ModalBody, ModalFooter } from '../../components/ui'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'

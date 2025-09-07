@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   IoPlayOutline,
   IoStopOutline,
   IoToggleOutline,
-  IoSettingsOutline,
   IoVideocamOutline,
   IoVideocamOffOutline,
   IoPeopleOutline,
@@ -15,7 +14,7 @@ import {
 } from 'react-icons/io5';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui';
 import Button from '../ui/Button';
-import { attendanceApi, type ApiStatus } from '../../services';
+import { type ApiStatus } from '../../services';
 
 interface CameraControlsProps {
   status: ApiStatus | null;
@@ -224,7 +223,7 @@ export default function CameraControls({
             transition={{ delay: 0.6 }}
           >
             <Button
-              onClick={() => handleAction('add_person', onOpenAddPerson)}
+              onClick={() => handleAction('add_person', async () => onOpenAddPerson())}
               disabled={disabled || isLoading}
               variant="outline"
               className="w-full h-16 border-2 border-purple-500 text-purple-600 hover:bg-purple-50 hover:border-purple-600"

@@ -3,25 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   IoLibraryOutline,
   IoCalendarOutline,
-  IoTimeOutline,
   IoPeopleOutline,
   IoLocationOutline,
-  IoBookOutline,
   IoAddOutline,
   IoSearchOutline,
   IoEyeOutline,
   IoPencilOutline,
   IoTrashOutline,
-  IoCheckmarkOutline,
-  IoCloseOutline,
-  IoPersonOutline,
-  IoSchoolOutline,
-  IoStatsChartOutline
 } from 'react-icons/io5'
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Modal, ModalBody, ModalFooter, Table } from '../../components/ui'
-import { useQuery, useMutation } from 'convex/react'
+import { Card, CardContent, Button, Input, Modal, ModalBody, ModalFooter } from '../../components/ui'
+import { useQuery } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
-import type { Id } from '../../../convex/_generated/dataModel'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function ClassesPage() {
@@ -170,11 +162,6 @@ export default function ClassesPage() {
     setShowStudentsModal(true)
   }
 
-  const getCourseName = (courseId: string) => {
-    if (!courses) return courseId
-    const course = courses.find(c => c.course_id === courseId)
-    return course?.course_name || courseId
-  }
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -478,7 +465,7 @@ export default function ClassesPage() {
             <div className="space-y-2">
               <h5 className="font-medium text-gray-900">Student List</h5>
               <div className="max-h-64 overflow-y-auto space-y-2">
-                {students?.slice(0, selectedClass?.enrolled_students || 0).map((student, index) => (
+                {students?.slice(0, selectedClass?.enrolled_students || 0).map((student) => (
                   <div key={student._id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
                     <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-semibold text-sm">
                       {student.full_name.split(' ').map((n: string) => n[0]).join('')}

@@ -6,21 +6,15 @@ import {
   IoRefreshOutline,
   IoShieldOutline,
   IoNotificationsOutline,
-  IoColorPaletteOutline,
-  IoTimeOutline,
-  IoLanguageOutline,
-  IoMailOutline,
-  IoLockClosedOutline,
-  IoPersonOutline,
   IoSchoolOutline,
   IoDocumentTextOutline
 } from 'react-icons/io5'
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Modal, ModalBody, ModalFooter } from '../../components/ui'
+import { Card, CardContent, CardHeader, Button, Input, Modal, ModalBody, ModalFooter } from '../../components/ui'
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general')
   const [showModal, setShowModal] = useState(false)
-  const [modalType, setModalType] = useState('')
+  const [, setModalType] = useState('')
   
   // Settings state
   const [settings, setSettings] = useState({

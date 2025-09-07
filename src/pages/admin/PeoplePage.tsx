@@ -4,15 +4,14 @@ import {
   IoPeopleOutline,
   IoAddOutline,
   IoSearchOutline,
-  IoPencilOutline,
-  IoTrashOutline,
   IoEyeOutline,
   IoPersonOutline,
   IoBookOutline,
   IoStatsChartOutline,
   IoCheckmarkOutline,
   IoCloseOutline,
-  IoFilterOutline,
+  IoPencilOutline,
+  IoTrashOutline,
   IoSchoolOutline,
   IoBusinessOutline
 } from 'react-icons/io5'
@@ -532,7 +531,7 @@ export default function PeoplePage() {
                   >
                     <option value="">Select Department</option>
                     {departments?.map(dept => (
-                      <option key={dept._id} value={dept._id}>{dept.name}</option>
+                      <option key={dept._id} value={dept._id}>{dept.department_name}</option>
                     ))}
                   </select>
                 </div>

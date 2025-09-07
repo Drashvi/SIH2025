@@ -1,5 +1,5 @@
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { internalMutation, mutation, query } from "./_generated/server";
 
 // Get all people
 export const getAllPeople = query({
@@ -72,7 +72,7 @@ export const createPerson = mutation({
     // Set default approval status based on role
     const personData = {
       ...args,
-      approval_status: "approved"
+      approval_status: "pending" as const,
     };
     return await ctx.db.insert("people", personData);
   },

@@ -83,7 +83,7 @@ const notificationsData = [
   }
 ]
 
-export default function Header({ setSidebarOpen, sidebarExpanded, setSidebarExpanded }: HeaderProps) {
+export default function Header({ setSidebarOpen }: HeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [notifications, setNotifications] = useState(notificationsData)
   const [showNotifications, setShowNotifications] = useState(false)

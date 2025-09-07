@@ -4,7 +4,6 @@ import { IoClose, IoSchoolOutline } from "react-icons/io5";
 import clsx from 'clsx'
 import { useAuth } from "../../hooks/useAuth";
 import type { NavItem } from "../../types";
-import { IoClipboardOutline } from 'react-icons/io5'
 
 interface SidebarProps {
   navigation: NavItem[];
@@ -14,7 +13,7 @@ interface SidebarProps {
 }
 
 
-export default function Sidebar({ navigation, sidebarOpen, setSidebarOpen, sidebarExpanded }: SidebarProps) {
+export default function Sidebar({ navigation, sidebarOpen, setSidebarOpen }: SidebarProps) {
   const { role } = useAuth();
   const location = useLocation();
 
